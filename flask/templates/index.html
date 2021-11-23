@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+    <link rel="stylesheet"  type="text/css" href="{{ url_for('static',filename='styles/page.css') }}">
+</head>
+<body>
+
+<h3>MQTT Message Simulator</h3>
+
+<div class="slidecontainer">
+  
+  <form action="/" method="POST" id="form">
+  <label> <b>Temperature:&nbsp;  </label>    
+  <input type="range" min="0" max="100" class="slider" id="Tempid" name="Temp" value={{ pTemp }}>  
+  <span id="Tempval" name="Tempval" > {{ pTemp }} </span>
+  <p>
+  <label for="Vol"> <b>Volume: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </label>
+  <input type="range" min="0" max="100" value={{ pVol }} class="slider" id="Volid" name="Vol">    
+  <span id="Volval" name="Volval">{{ pVol }}</span>
+  <p>
+  <label for="Visc"> <b>Viscosity: &nbsp; &nbsp; &nbsp; &nbsp; </label>
+  <input type="range" min="0" max="100" value={{ pVisc }} class="slider" id="Viscid" name="Visc">   
+  <span id="Viscval" name="Viscval">{{ pVisc }}</span>
+
+  <p>
+  <button input type="submit" name="reset" value=1> Reset </button>
+  </form>
+
+
+
+
+<script>
+   
+    var slider = document.getElementById("Tempid");
+    var output = document.getElementById("Tempval");
+    output.innerHTML = slider.value; // Display the  slider value.
+
+    slider.oninput = function() {        
+    output.innerHTML = this.value;
+    }
+
+    slider.onmouseup = function () {
+      document.getElementById("form").submit();
+    }
+
+    var sliderVol = document.getElementById("Volid");
+    var outputVol = document.getElementById("Volval");    
+    outputVol.innerHTML = sliderVol.value; // Display the slider value.
+
+    sliderVol.oninput = function() {        
+    outputVol.innerHTML = this.value;
+    }
+
+    sliderVol.onmouseup = function () {
+        document.getElementById("form").submit();
+    }
+
+
+    var sliderVisc = document.getElementById("Viscid");
+    var outputVisc = document.getElementById("Viscval");    
+    outputVisc.innerHTML = sliderVisc.value; // Display the  slider value.
+
+    sliderVisc.oninput = function() {        
+    outputVisc.innerHTML = this.value;
+    }
+
+     sliderVisc.onmouseup = function () {
+        document.getElementById("form").submit();
+    }
+
+
+    
+
+
+
+</script>
+
+</div>
+
+</body>
+</html>
