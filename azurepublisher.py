@@ -10,7 +10,7 @@ import ssl
 iot_hub_name = "IoTrpiHub"
 device_id = "rpi-device"
 path_to_root_cert = "digital.cer"
-sas_token = "SharedAccessSignature sr=IoTrpiHub.azure-devices.net%2Fdevices%2Frpi-device&sig=NJ3VyIip3Xz3lxpbIRvfjeHiLJJ5bzMh3aV5PGZuPmQ%3D&se=1638009801"
+sas_token = "SharedAccessSignature sr=IoTrpiHub.azure-devices.net%2Fdevices%2Frpi-device&sig=t2A6X70RvAk8YiMs71MH6OEDiPfU6cNQfVTOlbFtjm8%3D&se=1638023592"
 
 username = "{}.azure-devices.net/{}/api-version=2018-06-30".format(iot_hub_name, device_id)
 
@@ -56,15 +56,15 @@ client.tls_insecure_set(False)
 print(client.connect(MQTT_SERVER, 8883, keepalive=60))
 client.loop_start()  #Start loop 
 print("In Main Loop")
-t_temp = "devices/{}/messages/events/Temp".format(device_id)
+t_temp = "devices/{}/messages/events/".format(device_id)
 msgs= [{"topic":t_temp, "payload": {"data": "Temperature is {}".format(random.randrange(0, 100)), "datetime": None}}, ]
 
 
       
-for i in range(10):
+while True:
     append_datetime(msgs)  
     print(client.publish(msgs[0]["topic"], payload=msgs[0]["payload"] ))
-    time.sleep(3) # Wait for connection setup to complete
+    time.sleep(10) # Wait for connection setup to complete
 
 client.loop_stop() 
 client.disconnect()
