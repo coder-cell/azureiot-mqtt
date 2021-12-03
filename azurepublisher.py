@@ -10,7 +10,7 @@ import ssl
 iot_hub_name = "IoTrpiHub"
 device_id = "rpi-device"
 path_to_root_cert = "digital.cer"
-sas_token = "SharedAccessSignature sr=IoTrpiHub.azure-devices.net%2Fdevices%2Frpi-device&sig=t2A6X70RvAk8YiMs71MH6OEDiPfU6cNQfVTOlbFtjm8%3D&se=1638023592"
+sas_token = "SharedAccessSignature sr=IoTrpiHub.azure-devices.net%2Fdevices%2Frpi-device&sig=orAHF37DRUitjHSD5NW11493MesQQmJFPcRmTMMcj70%3D&se=1638503053"
 
 username = "{}.azure-devices.net/{}/api-version=2018-06-30".format(iot_hub_name, device_id)
 
@@ -40,11 +40,18 @@ def on_connect(client, userdata, flags, rc):
         
 def on_log(client, userdata, level, buf):
     print("log: ",buf)
+    
+    
+def on_publish(client, userdata, mid):
+    print("publish: ",userdata)
+    print("publish: ",mid)
+    
 
 client = mqtt.Client(client_id=device_id, protocol=mqtt.MQTTv311, clean_session=False)
 
 client.on_log = on_log
 client.on_connect=on_connect 
+client.on_publish = on_publish
 
 client.username_pw_set(username=username,
                        password=sas_token)
@@ -53,17 +60,28 @@ client.tls_set(ca_certs=path_to_root_cert, certfile=None, keyfile=None,
 client.tls_insecure_set(False)
 
 
-print(client.connect(MQTT_SERVER, 8883, keepalive=60))
-client.loop_start()  #Start loop 
+# print(client.connect(MQTT_SERVER, 8883, keepalive=60, bind_port=2021))
+# client.loop_start()  #Start loop 
 print("In Main Loop")
-t_temp = "devices/{}/messages/events/".format(device_id)
+t_temp = "devices/{}/messages/events/Temp".format(device_id)
 msgs= [{"topic":t_temp, "payload": {"data": "Temperature is {}".format(random.randrange(0, 100)), "datetime": None}}, ]
 
 
       
 while True:
     append_datetime(msgs)  
-    print(client.publish(msgs[0]["topic"], payload=msgs[0]["payload"] ))
+    print(publish.single(msgs[0]["topic"], payload=msgs[0]["payload"],
+                         hostname=MQTT_SERVER,
+                         port=8883, 
+                         client_id=device_id, keepalive=60, will=None, 
+                         auth={"username":username,
+                               "password":sas_token},
+                         tls={'ca_certs':path_to_root_cert, 
+                              'certfile':None,
+                              'keyfile':None, 
+                              'tls_version':ssl.PROTOCOL_TLSv1_2,
+                              'ciphers':None, 
+                              'insecure':False}, protocol=mqtt.MQTTv311, transport="tcp", proxy_args=None))
     time.sleep(10) # Wait for connection setup to complete
 
 client.loop_stop() 
